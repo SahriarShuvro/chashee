@@ -15,12 +15,12 @@ const CustomModal = () => {
     };
     return (
         <>
-            <Button size='large' type="primary" className="ubuntu-bold bg-blue-500 hover:bg-green-600 text-white" onClick={showModal}>
+            <Button size='large' type="primary" className="ubuntu-bold bg-blue-500 text-white" onClick={showModal}>
                 <FontAwesomeIcon icon={faCirclePlus} className='mr-2' /> Add Post
             </Button>
             <Modal footer={false}
                 open={open}
-                title="Add Post!"
+                title={<p className='font-semibold text-lg mb-6'>Add Post!</p>}
                 onCancel={handleCancel}
             >
                 <Post />

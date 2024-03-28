@@ -30,6 +30,7 @@ const getAllCultivations = async (req, res) => {
             crop_prices: cultivation.crop_prices,
             cost: cultivation.cost,
             profit: cultivation.profit,
+            description: cultivation.description,
             status: cultivation.status,
         });
         const allCultivations = await cultivationAllData(
@@ -66,6 +67,7 @@ const createCultivation = async (req, res) => {
         crop_prices,
         cost,
         profit,
+        description
     } = req.body
     let slug = slugify(title, { lower: true, replacement: '-', remove: /[^\w\s-]/g });
     const existingCultivation = await Cultivation.findOne({ slug }).exec();
@@ -101,6 +103,7 @@ const createCultivation = async (req, res) => {
         crop_prices,
         cost,
         profit,
+        description
     });
 
     try {
@@ -169,6 +172,7 @@ const updateCultivation = async (req, res) => {
             crop_prices,
             cost,
             profit,
+            description,
             status
         } = req.body
 
@@ -195,6 +199,7 @@ const updateCultivation = async (req, res) => {
         let crop_pricesNew = crop_prices === null ? cultivation.crop_prices : crop_prices;
         let costNew = cost === null ? cultivation.cost : cost;
         let profitNew = profit === null ? cultivation.profit : profit;
+        let descriptionNew = description === null ? cultivation.description : description;
         let statusNew = status === null ? cultivation.status : status;
 
 
@@ -219,6 +224,7 @@ const updateCultivation = async (req, res) => {
                 crop_prices: crop_pricesNew,
                 cost: costNew,
                 profit: profitNew,
+                description: descriptionNew,
                 status: statusNew
             },
             { new: true }

@@ -1,51 +1,173 @@
-import React, { useState } from 'react';
-import moment from 'moment';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import {
     Button,
-    Cascader,
-    ColorPicker,
     DatePicker,
     Form,
     Input,
     InputNumber,
     Select,
-    Slider,
-    Switch,
-    TreeSelect,
     Upload,
-    Space
+    Space,
+    Alert,
 } from 'antd';
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
+
+
 const normFile = (e) => {
     if (Array.isArray(e)) {
         return e;
     }
     return e?.fileList;
 };
-const FormDisabledDemo = () => {
-    const [plantingTime, setPlantingTime] = useState(null);
 
-    const handlePlantingTimeChange = (dates) => {
+
+const CultivationForm = ({ onSubmitVal }) => {
+    // Data
+    const [form] = Form.useForm();
+    const [sowingTime, setSowingTime] = useState(null);
+    const [plantingTime, setPlantingTime] = useState(null);
+    const [harvestTime, setHarvestTime] = useState(null);
+
+    const [categories, setCategories] = useState([]);
+    const [seasons, setSeasons] = useState([]);
+    const [soilTypes, setSoilTypes] = useState([]);
+    const [landTypes, setLandTypes] = useState([]);
+    const [insects, setInsects] = useState([]);
+    const [diseases, setDiseases] = useState([]);
+
+
+
+    // Actions
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
+    const [errorMsg, setErrorMsg] = useState();
+
+    const handleDateChange = (dates, timeType) => {
         if (dates && dates.length === 2) {
-            const start = moment(dates[0]).toISOString();
-            const end = moment(dates[1]).toISOString();
-            setPlantingTime({ start, end });
+            const options = { month: 'short', day: 'numeric' };
+            const [startDate, endDate] = dates;
+            const start = new Date(startDate).toLocaleDateString('en-US', options);
+            const end = new Date(endDate).toLocaleDateString('en-US', options);
+
+            switch (timeType) {
+                case 'sowing':
+                    setSowingTime({ start, end });
+                    break;
+                case 'planting':
+                    setPlantingTime({ start, end });
+                    break;
+                case 'harvest':
+                    setHarvestTime({ start, end });
+                    break;
+                default:
+                    break;
+            }
         } else {
-            setPlantingTime(null);
+            switch (timeType) {
+                case 'sowing':
+                    setSowingTime(null);
+                    break;
+                case 'planting':
+                    setPlantingTime(null);
+                    break;
+                case 'harvest':
+                    setHarvestTime(null);
+                    break;
+                default:
+                    break;
+            }
         }
     };
-    const onFinish = (e) => {
-        console.log(e);
-    }
+    useEffect(() => {
+        fetchData('/api/admin/categories', setCategories);
+        fetchData('/api/admin/season', setSeasons);
+        fetchData('/api/admin/soil-type', setSoilTypes);
+        fetchData('/api/admin/land-type', setLandTypes);
+        fetchData('/api/admin/insects', setInsects);
+        fetchData('/api/admin/diseases', setDiseases);
+    }, []);
+
+    const fetchData = async (link, setData) => {
+        try {
+            const response = await axios.get(link);
+            setData(response.data.entries);
+        } catch (error) {
+            setError(true);
+            setErrorMsg(error.message);
+            setTimeout(() => {
+                setError(false);
+            }, 2500);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const onSubMitForm = (values) => {
+        values.harvest_time = harvestTime;
+        values.planting_time = plantingTime;
+        values.sowing_time = sowingTime;
+        values.thumb = null;
+
+        // console.log(values);
+        try {
+            setLoading(true);
+            onSubmitVal(values);
+            setSuccess(true);
+            setTimeout(() => {
+                setSuccess(false);
+            }, 2500);
+        } catch (error) {
+            setError(true);
+            setErrorMsg(error.message);
+            setTimeout(() => {
+                setError(false);
+            }, 2500);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    // console.log("Categories props:", categories);
+    // console.log("Seasons props:", seasons);
+    // console.log("Soil Types props:", soilTypes);
+    // console.log("Land Types props:", landTypes);
+    // console.log("Insects props:", insects);
+    // console.log("Diseases props:", diseases);
+
     return (
         <>
+            {success && (
+                <Space className='fixed z-10 top-20 w-full flex left-0 right-0 bg m-auto justify-center align-middle'>
+                    <Alert
+                        className='border-green-500'
+                        message="Success Tips"
+                        description="Success fully added post"
+                        type="success"
+                        showIcon
+                    />
+                </Space>
+            )}
+            {error && (
+                <Space className='fixed z-10 top-20 w-full flex left-0 right-0 bg m-auto justify-center align-middle'>
+                    <Alert
+                        message="Error"
+                        description={errorMsg}
+                        type="error"
+                        showIcon
+                    />
+                </Space>
+            )}
+
             <Form
-                onFinish={onFinish}
+                form={form}
+                onFinish={onSubMitForm}
                 layout="vertical"
             >
-                <Form.Item valuePropName="fileList" getValueFromEvent={normFile}>
+                <Form.Item name='thumb' valuePropName="fileList" getValueFromEvent={normFile}>
                     <Upload action="/upload.do" listType="picture-card">
                         <button
                             style={{
@@ -72,70 +194,71 @@ const FormDisabledDemo = () => {
                 <div className='flex justify-between w-full'>
                     <Form.Item label="Category" className='w-1/2' name='category'>
                         <Select className='pr-2' >
-                            <Select.Option value="demo">Demo</Select.Option>
-                            <Select.Option value="demo1">Demo</Select.Option>
-                            <Select.Option value="demo2">Demo</Select.Option>
-                            <Select.Option value="demo3">Demo</Select.Option>
-                            <Select.Option value="demo4">Demo</Select.Option>
+                            {categories.map(category => (
+                                <Select.Option key={category._id} value={category._id}>{category.title}</Select.Option>
+                            ))}
                         </Select>
                     </Form.Item>
                     <Form.Item label="Season" className='w-1/2' name='season'>
                         <Select className='pl-2'>
-                            <Select.Option value="demo">Demo</Select.Option>
-                            <Select.Option value="demo2">Demo</Select.Option>
-                            <Select.Option value="demo3">Demo</Select.Option>
-                            <Select.Option value="demo4">Demo</Select.Option>
-                            <Select.Option value="demo5">Demo</Select.Option>
+                            {seasons.map(season => (
+                                <Select.Option key={season._id} value={season._id}>{season.title}</Select.Option>
+                            ))}
                         </Select>
                     </Form.Item>
                 </div>
                 <div className='flex justify-between w-full'>
                     <Form.Item label="Land Type" className='w-1/2' name='land_type'>
                         <Select className='pr-2' >
-                            <Select.Option value="demo">Demo</Select.Option>
-                            <Select.Option value="demo1">Demo</Select.Option>
-                            <Select.Option value="demo2">Demo</Select.Option>
-                            <Select.Option value="demo3">Demo</Select.Option>
-                            <Select.Option value="demo4">Demo</Select.Option>
+                            {landTypes.map(landType => (
+                                <Select.Option key={landType._id} value={landType._id}>{landType.title}</Select.Option>
+                            ))}
                         </Select>
                     </Form.Item>
                     <Form.Item label="Soil Type" className='w-1/2' name='soil_type'>
                         <Select className='pl-2' >
-                            <Select.Option value="demo">Demo</Select.Option>
-                            <Select.Option value="demo2">Demo</Select.Option>
-                            <Select.Option value="demo3">Demo</Select.Option>
-                            <Select.Option value="demo4">Demo</Select.Option>
-                            <Select.Option value="demo5">Demo</Select.Option>
+                            {soilTypes.map(soilType => (
+                                <Select.Option key={soilType._id} value={soilType._id}>{soilType.title}</Select.Option>
+                            ))}
                         </Select>
                     </Form.Item>
                 </div>
-                <Form.Item label="Sowing Time" className='w-full' name='sowing_time' >
-                    <RangePicker className='w-full' />
+
+                <div className='flex justify-between w-full'>
+                    <Form.Item label="Disease" className='w-1/2' name='disease'>
+                        <Select className='pr-2' >
+                            {diseases.map(disease => (
+                                <Select.Option key={disease._id} value={disease._id}>{disease.title}</Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label="Insects" className='w-1/2' name='insects'>
+                        <Select className='pl-2' >
+                            {insects.map(insects => (
+                                <Select.Option key={insects._id} value={insects._id}>{insects.title}</Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                </div>
+
+                <Form.Item label="Sowing Time" className='w-full' name='sowing_time'>
+                    <RangePicker className='w-full' onChange={(dates) => handleDateChange(dates, 'sowing')} value={sowingTime} />
                 </Form.Item>
                 <Form.Item label="Planting Time" className="w-full" name="planting_time">
-                    <DatePicker.RangePicker className="w-full" onChange={handlePlantingTimeChange} />
+                    <RangePicker className="w-full" onChange={(dates) => handleDateChange(dates, 'planting')} value={plantingTime} />
                 </Form.Item>
+                <Form.Item label="Harvest Time" className='w-full' name='harvest_time'>
+                    <RangePicker className='w-full' onChange={(dates) => handleDateChange(dates, 'harvest')} value={harvestTime} />
+                </Form.Item>
+
+
 
                 <Form.Item label="Seedling Amount" className='w-full' name='seedling_amount'>
                     <InputNumber className='w-full' />
                 </Form.Item>
 
-                <p className='font-semibold text-lg mb-2'>Distance</p>
-                <div className='flex justify-between w-full'>
-                    <Form.Item label="Plant to Plant" className='w-1/2' name={['distance', 'plant_to_plant']}>
-                        <div className='pr-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                    <Form.Item label="Row to Row" className='w-1/2' name={['distance', 'row_to_row']}>
-                        <div className='pl-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                </div>
-
                 <div>
-                    <p className='mb-2'>Fertilizers</p>
+                    <p className='font-semibold text-lg mb-2'>Fertilizers</p>
                     <Form.List name="fertilizers">
                         {(fields, { add, remove }) => (
                             <>
@@ -184,30 +307,20 @@ const FormDisabledDemo = () => {
                         )}
                     </Form.List>
                 </div>
-
+                <p className='font-semibold text-lg mb-2'>Distance</p>
                 <div className='flex justify-between w-full'>
-                    <Form.Item label="Disease" className='w-1/2' name='disease'>
-                        <Select className='pr-2' >
-                            <Select.Option value="demo">Demo</Select.Option>
-                            <Select.Option value="demo2">Demo</Select.Option>
-                            <Select.Option value="demo3">Demo</Select.Option>
-                            <Select.Option value="demo4">Demo</Select.Option>
-                            <Select.Option value="demo5">Demo</Select.Option>
-                        </Select>
+                    <Form.Item label="Plant to Plant" className='w-1/2' name={['distance', 'plant_to_plant']}>
+                        <div className='pr-2'>
+                            <InputNumber className='w-full' />
+                        </div>
                     </Form.Item>
-                    <Form.Item label="Insects" className='w-1/2' name='insects'>
-                        <Select className='pl-2' >
-                            <Select.Option value="demo">Demo</Select.Option>
-                            <Select.Option value="demo2">Demo</Select.Option>
-                            <Select.Option value="demo3">Demo</Select.Option>
-                            <Select.Option value="demo4">Demo</Select.Option>
-                            <Select.Option value="demo5">Demo</Select.Option>
-                        </Select>
+                    <Form.Item label="Row to Row" className='w-1/2' name={['distance', 'row_to_row']}>
+                        <div className='pl-2'>
+                            <InputNumber className='w-full' />
+                        </div>
                     </Form.Item>
                 </div>
-                <Form.Item label="Harvest Time" className='w-full' name='harvest_time'>
-                    <RangePicker className='w-full' />
-                </Form.Item>
+
 
                 <p className='font-semibold text-lg mb-2'>Crop Production</p>
                 <div className='flex justify-between w-full'>
@@ -262,16 +375,21 @@ const FormDisabledDemo = () => {
                     </Form.Item>
                 </div>
 
-                <Form.Item label="Description">
-                    <TextArea cols={6} name='description' />
+                <Form.Item label="Description" name='description'>
+                    <TextArea cols={6} />
                 </Form.Item>
 
 
-                <Button type="primary" size='large' htmlType="submit" className="ubuntu-bold bg-blue-500 text-white flex m-auto mr-0" >
+                <Button
+                    type="primary"
+                    size='large'
+                    htmlType="submit"
+                    loading={loading}
+                    className="ubuntu-bold bg-blue-500 text-white flex m-auto mr-0" >
                     Submit
                 </Button>
             </Form>
         </>
     );
 };
-export default () => <FormDisabledDemo />;
+export default () => <CultivationForm />;

@@ -14,8 +14,10 @@ const middleware = [
   express.json(),
 ];
 // Use other middleware
+// app.use(cors({
+//   origin: "http://localhost:5173/"
+// }));
 app.use(middleware);
-// app.use(cors());
 
 // API routes
 app.use("/api", api_routes);

@@ -19,7 +19,7 @@ const fertilizersSchema = new mongoose.Schema({
         required: true
     },
     amount: {
-        type: Number,
+        type: String,
         required: true
     }
 });
@@ -27,11 +27,11 @@ const fertilizersSchema = new mongoose.Schema({
 // Sub-schema for distance
 const distanceSchema = new mongoose.Schema({
     plant_to_plant: {
-        type: Number,
+        type: String,
         required: true
     },
     row_to_row: {
-        type: Number,
+        type: String,
         required: true
     }
 });
@@ -39,11 +39,11 @@ const distanceSchema = new mongoose.Schema({
 // Sub-schema for range
 const rangeSchema = new mongoose.Schema({
     min: {
-        type: Number,
+        type: String,
         required: true
     },
     max: {
-        type: Number,
+        type: String,
         required: true
     }
 });
@@ -88,15 +88,15 @@ const cultivationSchema = new mongoose.Schema({
         required: true
     },
     sowing_time: {
-        type: timeSchema,
+        type: [timeSchema],
         required: true
     },
     planting_time: {
-        type: timeSchema,
+        type: [timeSchema],
         required: true
     },
     seedling_amount: {
-        type: Number,
+        type: String,
         required: true
     },
     distance: {
@@ -116,7 +116,7 @@ const cultivationSchema = new mongoose.Schema({
         ref: 'Insects'
     },
     harvest_time: {
-        type: timeSchema,
+        type: [timeSchema],
         required: true
     },
     crop_production: {
@@ -133,6 +133,10 @@ const cultivationSchema = new mongoose.Schema({
     },
     profit: {
         type: rangeSchema,
+        required: true
+    },
+    description: {
+        type: String,
         required: true
     },
     status: {

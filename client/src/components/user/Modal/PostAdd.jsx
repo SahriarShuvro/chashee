@@ -35,8 +35,10 @@ function CustomModal() {
             <Modal
                 open={open}
                 title={<p className='font-semibold text-lg mb-6'>Add Post!</p>}
+                centered
                 onCancel={handleCancel}
                 footer={null}
+                width={1400}
             >
                 <AddForm onSubmit={handleSubmit} />
             </Modal>

@@ -131,13 +131,6 @@ const CultivationForm = ({ onSubmitVal }) => {
     };
 
 
-    // console.log("Categories props:", categories);
-    // console.log("Seasons props:", seasons);
-    // console.log("Soil Types props:", soilTypes);
-    // console.log("Land Types props:", landTypes);
-    // console.log("Insects props:", insects);
-    // console.log("Diseases props:", diseases);
-
     return (
         <>
             {success && (
@@ -167,219 +160,232 @@ const CultivationForm = ({ onSubmitVal }) => {
                 onFinish={onSubMitForm}
                 layout="vertical"
             >
-                <Form.Item name='thumb' valuePropName="fileList" getValueFromEvent={normFile}>
-                    <Upload action="/upload.do" listType="picture-card">
-                        <button
-                            style={{
-                                border: 0,
-                                background: 'none',
-                            }}
-                            type="button"
-                        >
-                            <PlusOutlined />
-                            <div
-                                style={{
-                                    marginTop: 8,
-                                }}
-                            >
-                                Upload
-                            </div>
-                        </button>
-                    </Upload>
-                </Form.Item>
-
-                <Form.Item label="Title" name='title'>
-                    <Input />
-                </Form.Item>
-                <div className='flex justify-between w-full'>
-                    <Form.Item label="Category" className='w-1/2' name='category'>
-                        <Select className='pr-2' >
-                            {categories.map(category => (
-                                <Select.Option key={category._id} value={category._id}>{category.title}</Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label="Season" className='w-1/2' name='season'>
-                        <Select className='pl-2'>
-                            {seasons.map(season => (
-                                <Select.Option key={season._id} value={season._id}>{season.title}</Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </div>
-                <div className='flex justify-between w-full'>
-                    <Form.Item label="Land Type" className='w-1/2' name='land_type'>
-                        <Select className='pr-2' >
-                            {landTypes.map(landType => (
-                                <Select.Option key={landType._id} value={landType._id}>{landType.title}</Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label="Soil Type" className='w-1/2' name='soil_type'>
-                        <Select className='pl-2' >
-                            {soilTypes.map(soilType => (
-                                <Select.Option key={soilType._id} value={soilType._id}>{soilType.title}</Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </div>
-
-                <div className='flex justify-between w-full'>
-                    <Form.Item label="Disease" className='w-1/2' name='disease'>
-                        <Select className='pr-2' >
-                            {diseases.map(disease => (
-                                <Select.Option key={disease._id} value={disease._id}>{disease.title}</Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label="Insects" className='w-1/2' name='insects'>
-                        <Select className='pl-2' >
-                            {insects.map(insects => (
-                                <Select.Option key={insects._id} value={insects._id}>{insects.title}</Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </div>
-
-                <Form.Item label="Sowing Time" className='w-full' name='sowing_time'>
-                    <RangePicker className='w-full' onChange={(dates) => handleDateChange(dates, 'sowing')} value={sowingTime} />
-                </Form.Item>
-                <Form.Item label="Planting Time" className="w-full" name="planting_time">
-                    <RangePicker className="w-full" onChange={(dates) => handleDateChange(dates, 'planting')} value={plantingTime} />
-                </Form.Item>
-                <Form.Item label="Harvest Time" className='w-full' name='harvest_time'>
-                    <RangePicker className='w-full' onChange={(dates) => handleDateChange(dates, 'harvest')} value={harvestTime} />
-                </Form.Item>
-
-
-
-                <Form.Item label="Seedling Amount" className='w-full' name='seedling_amount'>
-                    <InputNumber className='w-full' />
-                </Form.Item>
-
-                <div>
-                    <p className='font-semibold text-lg mb-2'>Fertilizers</p>
-                    <Form.List name="fertilizers">
-                        {(fields, { add, remove }) => (
-                            <>
-                                {fields.map(({ key, name, ...restField }) => (
-                                    <Space
-                                        key={key}
+                <div className='flex justify-between align-middle'>
+                    <div className='w-1/3'>
+                        <div className='px-4'>
+                            <Form.Item name='thumb' valuePropName="fileList" getValueFromEvent={normFile}>
+                                <Upload action="/upload.do" listType="picture-card">
+                                    <button
                                         style={{
-                                            display: 'flex',
-                                            marginBottom: 8,
+                                            border: 0,
+                                            background: 'none',
                                         }}
-                                        align="baseline"
+                                        type="button"
                                     >
-                                        <Form.Item
-                                            {...restField}
-                                            name={[name, 'name']}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Missing name',
-                                                },
-                                            ]}
+                                        <PlusOutlined />
+                                        <div
+                                            style={{
+                                                marginTop: 8,
+                                            }}
                                         >
-                                            <Input placeholder="Name" />
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            name={[name, 'amount']}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Missing amount',
-                                                },
-                                            ]}
-                                        >
-                                            <Input placeholder="Amount" />
-                                        </Form.Item>
-                                        <MinusCircleOutlined onClick={() => remove(name)} />
-                                    </Space>
-                                ))}
-                                <Form.Item>
-                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                        Add Fertilizer
-                                    </Button>
+                                            Upload
+                                        </div>
+                                    </button>
+                                </Upload>
+                            </Form.Item>
+
+                            <Form.Item label="Title" name='title'>
+                                <Input />
+                            </Form.Item>
+                            <div className='flex justify-between w-full'>
+                                <Form.Item label="Category" className='w-1/2' name='category'>
+                                    <Select className='pr-2' >
+                                        {categories.map(category => (
+                                            <Select.Option key={category._id} value={category._id}>{category.title}</Select.Option>
+                                        ))}
+                                    </Select>
                                 </Form.Item>
-                            </>
-                        )}
-                    </Form.List>
-                </div>
-                <p className='font-semibold text-lg mb-2'>Distance</p>
-                <div className='flex justify-between w-full'>
-                    <Form.Item label="Plant to Plant" className='w-1/2' name={['distance', 'plant_to_plant']}>
-                        <div className='pr-2'>
-                            <InputNumber className='w-full' />
+                                <Form.Item label="Season" className='w-1/2' name='season'>
+                                    <Select className='pl-2'>
+                                        {seasons.map(season => (
+                                            <Select.Option key={season._id} value={season._id}>{season.title}</Select.Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                            <div className='flex justify-between w-full'>
+                                <Form.Item label="Land Type" className='w-1/2' name='land_type'>
+                                    <Select className='pr-2' >
+                                        {landTypes.map(landType => (
+                                            <Select.Option key={landType._id} value={landType._id}>{landType.title}</Select.Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                                <Form.Item label="Soil Type" className='w-1/2' name='soil_type'>
+                                    <Select className='pl-2' >
+                                        {soilTypes.map(soilType => (
+                                            <Select.Option key={soilType._id} value={soilType._id}>{soilType.title}</Select.Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                            <div className='flex justify-between w-full'>
+                                <Form.Item label="Disease" className='w-1/2' name='disease'>
+                                    <Select className='pr-2' >
+                                        {diseases.map(disease => (
+                                            <Select.Option key={disease._id} value={disease._id}>{disease.title}</Select.Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                                <Form.Item label="Insects" className='w-1/2' name='insects'>
+                                    <Select className='pl-2' >
+                                        {insects.map(insects => (
+                                            <Select.Option key={insects._id} value={insects._id}>{insects.title}</Select.Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                            <p className='font-semibold text-lg mb-2'>Distance</p>
+                            <div className='flex justify-between w-full'>
+                                <Form.Item label="Plant to Plant" className='w-1/2' name={['distance', 'plant_to_plant']}>
+                                    <div className='pr-2'>
+                                        <InputNumber className='w-full' />
+                                    </div>
+                                </Form.Item>
+                                <Form.Item label="Row to Row" className='w-1/2' name={['distance', 'row_to_row']}>
+                                    <div className='pl-2'>
+                                        <InputNumber className='w-full' />
+                                    </div>
+                                </Form.Item>
+                            </div>
                         </div>
-                    </Form.Item>
-                    <Form.Item label="Row to Row" className='w-1/2' name={['distance', 'row_to_row']}>
-                        <div className='pl-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                </div>
+                    </div>
 
+                    <div className='w-[2px] h-[400px] bg-gray-200 rounded-xl hidden'></div>
 
-                <p className='font-semibold text-lg mb-2'>Crop Production</p>
-                <div className='flex justify-between w-full'>
-                    <Form.Item label="Maximum" className='w-1/2' name={['crop_production', 'max']}>
-                        <div className='pr-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                    <Form.Item label="Minimum" className='w-1/2' name={['crop_production', 'min']}>
-                        <div className='pl-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                </div>
-                <p className='font-semibold text-lg mb-2'>Crop Price</p>
-                <div className='flex justify-between w-full'>
-                    <Form.Item label="Maximum" className='w-1/2' name={['crop_prices', 'max']}>
-                        <div className='pr-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                    <Form.Item label="Minimum" className='w-1/2' name={['crop_prices', 'min']}>
-                        <div className='pl-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                </div>
-                <p className='font-semibold text-lg mb-2'>Total Cost</p>
-                <div className='flex justify-between w-full'>
-                    <Form.Item label="Maximum" className='w-1/2' name={['cost', 'max']}>
-                        <div className='pr-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                    <Form.Item label="Minimum" className='w-1/2' name={['cost', 'min']}>
-                        <div className='pl-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                </div>
-                <p className='font-semibold text-lg mb-2'>NET Profit</p>
-                <div className='flex justify-between w-full'>
-                    <Form.Item label="Maximum" className='w-1/2' name={['profit', 'max']}>
-                        <div className='pr-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                    <Form.Item label="Minimum" className='w-1/2' name={['profit', 'min']}>
-                        <div className='pl-2'>
-                            <InputNumber className='w-full' />
-                        </div>
-                    </Form.Item>
-                </div>
+                    <div className='w-1/3'>
+                        <div className='px-4 '>
+                            <Form.Item label="Sowing Time" className='w-full' name='sowing_time'>
+                                <RangePicker className='w-full' onChange={(dates) => handleDateChange(dates, 'sowing')} value={sowingTime} />
+                            </Form.Item>
+                            <Form.Item label="Planting Time" className="w-full" name="planting_time">
+                                <RangePicker className="w-full" onChange={(dates) => handleDateChange(dates, 'planting')} value={plantingTime} />
+                            </Form.Item>
+                            <Form.Item label="Harvest Time" className='w-full' name='harvest_time'>
+                                <RangePicker className='w-full' onChange={(dates) => handleDateChange(dates, 'harvest')} value={harvestTime} />
+                            </Form.Item>
 
-                <Form.Item label="Description" name='description'>
-                    <TextArea cols={6} />
-                </Form.Item>
+                            <Form.Item label="Seedling Amount" className='w-full' name='seedling_amount'>
+                                <InputNumber className='w-full' />
+                            </Form.Item>
 
+                            <p className='font-semibold text-lg mb-2'>Crop Production</p>
+                            <div className='flex justify-between w-full'>
+                                <Form.Item label="Maximum" className='w-1/2' name={['crop_production', 'max']}>
+                                    <div className='pr-2'>
+                                        <InputNumber className='w-full' />
+                                    </div>
+                                </Form.Item>
+                                <Form.Item label="Minimum" className='w-1/2' name={['crop_production', 'min']}>
+                                    <div className='pl-2'>
+                                        <InputNumber className='w-full' />
+                                    </div>
+                                </Form.Item>
+                            </div>
+                            <p className='font-semibold text-lg mb-2'>Crop Price</p>
+                            <div className='flex justify-between w-full'>
+                                <Form.Item label="Maximum" className='w-1/2' name={['crop_prices', 'max']}>
+                                    <div className='pr-2'>
+                                        <InputNumber className='w-full' />
+                                    </div>
+                                </Form.Item>
+                                <Form.Item label="Minimum" className='w-1/2' name={['crop_prices', 'min']}>
+                                    <div className='pl-2'>
+                                        <InputNumber className='w-full' />
+                                    </div>
+                                </Form.Item>
+                            </div>
 
+                        </div>
+                    </div>
+
+                    <div className='w-[2px] h-[400px] bg-gray-200 rounded-xl hidden'></div>
+
+                    <div className='w-1/3'>
+                        <div className='px-4 '>
+                            <div>
+                                <p className='font-semibold text-lg mb-2'>Fertilizers</p>
+                                <Form.List name="fertilizers">
+                                    {(fields, { add, remove }) => (
+                                        <>
+                                            {fields.map(({ key, name, ...restField }) => (
+                                                <Space
+                                                    key={key}
+                                                    style={{
+                                                        display: 'flex',
+                                                        marginBottom: 8,
+                                                    }}
+                                                    align="baseline"
+                                                >
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'name']}
+                                                        rules={[
+                                                            {
+                                                                required: true,
+                                                                message: 'Missing name',
+                                                            },
+                                                        ]}
+                                                    >
+                                                        <Input placeholder="Name" />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'amount']}
+                                                        rules={[
+                                                            {
+                                                                required: true,
+                                                                message: 'Missing amount',
+                                                            },
+                                                        ]}
+                                                    >
+                                                        <Input placeholder="Amount" />
+                                                    </Form.Item>
+                                                    <MinusCircleOutlined onClick={() => remove(name)} />
+                                                </Space>
+                                            ))}
+                                            <Form.Item>
+                                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                                    Add Fertilizer
+                                                </Button>
+                                            </Form.Item>
+                                        </>
+                                    )}
+                                </Form.List>
+                            </div>
+                            <p className='font-semibold text-lg mb-2'>Total Cost</p>
+                            <div className='flex justify-between w-full'>
+                                <Form.Item label="Maximum" className='w-1/2' name={['cost', 'max']}>
+                                    <div className='pr-2'>
+                                        <InputNumber className='w-full' />
+                                    </div>
+                                </Form.Item>
+                                <Form.Item label="Minimum" className='w-1/2' name={['cost', 'min']}>
+                                    <div className='pl-2'>
+                                        <InputNumber className='w-full' />
+                                    </div>
+                                </Form.Item>
+                            </div>
+                            <p className='font-semibold text-lg mb-2'>NET Profit</p>
+                            <div className='flex justify-between w-full'>
+                                <Form.Item label="Maximum" className='w-1/2' name={['profit', 'max']}>
+                                    <div className='pr-2'>
+                                        <InputNumber className='w-full' />
+                                    </div>
+                                </Form.Item>
+                                <Form.Item label="Minimum" className='w-1/2' name={['profit', 'min']}>
+                                    <div className='pl-2'>
+                                        <InputNumber className='w-full' />
+                                    </div>
+                                </Form.Item>
+                            </div>
+
+                            <Form.Item label="Description" name='description'>
+                                <TextArea cols={6} rows={8} />
+                            </Form.Item>
+                        </div>
+                    </div>
+                </div>
                 <Button
                     type="primary"
                     size='large'
